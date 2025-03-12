@@ -107,7 +107,7 @@ spec:
         command: ["launcher"]
         args: <%= @options[:migrate][:cmd].shellsplit %>
         <%- else -%>
-        command: <%= @options[:migrate][:cmd].shellsplit %>
+        args: <%= @options[:migrate][:cmd].shellsplit %>
         <%- end -%>
         envFrom:
         - configMapRef:
@@ -165,7 +165,7 @@ spec:
         command: ["launcher"]
         args: <%= proc[:cmd].shellsplit %>
         <%- else -%>
-        command: <%= proc[:cmd].shellsplit %>
+        args: <%= proc[:cmd].shellsplit %>
         <%- end -%>
         resources:
           requests:
@@ -220,7 +220,7 @@ spec:
         command: ["launcher"]
         args: <%= @options[:migrate][:check].shellsplit %>
         <%- else -%>
-        command: <%= @options[:migrate][:check].shellsplit %>
+        args: <%= @options[:migrate][:check].shellsplit %>
         <%- end -%>
         envFrom:
         - configMapRef:

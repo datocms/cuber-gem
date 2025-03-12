@@ -68,9 +68,9 @@ module Cuber::Commands
       migration = "migrate-#{@namespace['metadata']['labels']['app.kubernetes.io/instance']}"
       json = kubeget 'job', migration, '--ignore-not-found'
       if json
-        migration_command = json['spec']['template']['spec']['containers'][0]['command'].shelljoin
+        migration_args = json['spec']['template']['spec']['containers'][0]['args'].shelljoin
         migration_status = json['status']['succeeded'].to_i.zero? ? 'Pending' : 'Completed'
-        puts "migrate: #{migration_command} (#{migration_status})"
+        puts "migrate: #{migration_args} (#{migration_status})"
       else
         puts "None detected"
       end
@@ -81,12 +81,12 @@ module Cuber::Commands
       json = kubeget 'deployments'
       json['items'].each do |proc|
         name = proc['metadata']['name']
-        command = proc['spec']['template']['spec']['containers'][0]['command'].shelljoin
+        args = proc['spec']['template']['spec']['containers'][0]['args'].shelljoin
         available = proc['status']['availableReplicas'].to_i
         updated = proc['status']['updatedReplicas'].to_i
         replicas = proc['status']['replicas'].to_i
         scale = proc['spec']['replicas'].to_i
-        puts "#{name}: #{command} (#{available}/#{scale}) #{'OUT-OF-DATE' if replicas - updated > 0}"
+        puts "#{name}: #{args} (#{available}/#{scale}) #{'OUT-OF-DATE' if replicas - updated > 0}"
       end
     end
 
@@ -96,9 +96,9 @@ module Cuber::Commands
       json['items'].each do |cron|
         name = cron['metadata']['name']
         schedule = cron['spec']['schedule']
-        command = cron['spec']['jobTemplate']['spec']['template']['spec']['containers'][0]['command'].shelljoin
+        args = cron['spec']['jobTemplate']['spec']['template']['spec']['containers'][0]['args'].shelljoin
         last = cron['status']['lastScheduleTime']
-        puts "#{name}: #{schedule} #{command} #{'(' + time_ago_in_words(last) + ')' if last}"
+        puts "#{name}: #{schedule} #{args} #{'(' + time_ago_in_words(last) + ')' if last}"
       end
     end
 
