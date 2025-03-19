@@ -141,7 +141,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: "25%"
-      maxSurge: 0
+      maxSurge: "25%"
   template:
     metadata:
       labels:
@@ -194,16 +194,20 @@ spec:
           httpGet:
             port: 8080
             path: <%= URI.parse(@options[:health]).path.to_json %>
-            httpHeaders:
-              - name: Host
-                value: <%= URI.parse(@options[:health]).host.to_json %>
-              - name: X-Forwarded-Proto
-                value: <%= URI.parse(@options[:health]).scheme.to_json %>
           initialDelaySeconds: 0
-          periodSeconds: 10
+          periodSeconds: 1
           timeoutSeconds: 5
           successThreshold: 1
           failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            port: 8080
+            path: <%= URI.parse(@options[:health]).path.to_json %>
+          initialDelaySeconds: 5
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sleep", "30"]
         <%- end -%>
       <%- if @options[:migrate] && @options[:migrate][:check] -%>
       initContainers:

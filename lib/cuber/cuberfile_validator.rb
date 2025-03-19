@@ -107,7 +107,7 @@ module Cuber
     
     def validate_health
       return unless @options[:health]
-      @errors << 'health checks must be an http url' unless URI.parse(@options[:health]).kind_of? URI::HTTP
+      @errors << 'health checks must be an http url' unless URI.parse(@options[:health]).kind_of? URI::Generic
     end
 
     def validate_lb
